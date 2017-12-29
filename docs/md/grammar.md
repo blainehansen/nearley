@@ -89,6 +89,19 @@ expression -> number "+" number {%
 The rule above will parse the string `5+10` into `{ operator: "sum",
 leftOperand: 5, rightOperand: 10 }`.
 
+For rules using the `|` symbol to match multiple sequences, you need to provide a postprocessor for each one separately:
+
+```ne
+expression ->
+      number "+" number
+    | number "*" number {% 
+    ([leftOperand, _, rightOperand]) => ({leftOperand, rightOperand})
+%}
+    # this postprocessor will only be called
+    # for this last "*" rule,
+    # not the "+" one
+```
+
 The postprocessor can be any function with signature `function(data, location,
 reject)`. Here,
 
